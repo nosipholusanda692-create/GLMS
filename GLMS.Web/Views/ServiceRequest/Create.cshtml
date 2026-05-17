@@ -1,0 +1,71 @@
+@model ServiceRequest
+@{ ViewData["Title"] = "New Service Request"; }
+
+<h2>New Service Request</h2>
+<hr />
+
+<div class="alert alert-info">
+    <strong>Live Exchange Rate:</strong> 1 USD = R @ViewBag.CurrentRate (from ExchangeRate API)
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="ContractId" class="form-label"></label>
+                <select asp-for="ContractId" asp-items="ViewBag.Contracts" class="form-select">
+                    <option value="">-- Select Active Contract --</option>
+                </select>
+                <span asp-validation-for="ContractId" class="text-danger"></span>
+                <small class="text-muted">Only Active contracts are shown.</small>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="CostUSD" class="form-label"></label>
+                <input asp-for="CostUSD" class="form-control" id="costUSD" type="number" step="0.01" min="0" />
+                <span asp-validation-for="CostUSD" class="text-danger"></span>
+            </div>
+
+            <!-- Auto-calculated ZAR amount -->
+            <div class="mb-3">
+                <label class="form-label">Estimated Cost (ZAR) — auto calculated</label>
+                <input type="text" id="costZAR" class="form-control bg-light" readonly
+                       placeholder="Enter USD amount above..." />
+                <small class="text-muted">This will be saved automatically when you submit.</small>
+            </div>
+
+            <button type="submit" class="btn btn-success">Create Request</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    // When user types a USD amount, call our controller to get the ZAR equivalent
+    document.getElementById('costUSD').addEventListener('input', function () {
+        var usd = parseFloat(this.value);
+        if (isNaN(usd) || usd <= 0) {
+            document.getElementById('costZAR').value = '';
+            return;
+        }
+
+        fetch('/ServiceRequest/GetZARAmount?usdAmount=' + usd)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('costZAR').value = 'R ' + data.zarAmount + ' (rate: ' + data.rate + ')';
+            })
+            .catch(() => {
+                document.getElementById('costZAR').value = 'Could not fetch rate';
+            });
+    });
+</script>
+}

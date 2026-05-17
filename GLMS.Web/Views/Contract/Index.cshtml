@@ -1,0 +1,87 @@
+@model List<Contract>
+@{ ViewData["Title"] = "Contracts"; }
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Contracts</h2>
+    <a asp-action="Create" class="btn btn-success">+ New Contract</a>
+</div>
+
+<!-- Search / Filter Form -->
+<div class="card mb-4">
+    <div class="card-header bg-light"><strong>Search & Filter</strong></div>
+    <div class="card-body">
+        <form method="get" asp-action="Index">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Status</label>
+                    <select name="statusFilter" class="form-select">
+                        <option value="">-- All Statuses --</option>
+                        @foreach (var s in (string[])ViewBag.StatusOptions)
+                        {
+                            <option value="@s" selected="@(ViewBag.StatusFilter == s ? "selected" : null)">@s</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Start Date From</label>
+                    <input type="date" name="startFrom" value="@ViewBag.StartFrom" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Start Date To</label>
+                    <input type="date" name="startTo" value="@ViewBag.StartTo" class="form-control" />
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">Filter</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary">Clear</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<table class="table table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Title</th>
+            <th>Client</th>
+            <th>Status</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Service Level</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var contract in Model)
+        {
+            <tr>
+                <td>@contract.Title</td>
+                <td>@contract.Client?.Name</td>
+                <td>
+                    <span class="badge bg-@(contract.Status == ContractStatus.Active ? "success" :
+                                           contract.Status == ContractStatus.Expired ? "danger" :
+                                           contract.Status == ContractStatus.OnHold ? "warning" : "secondary")">
+                        @contract.Status
+                    </span>
+                </td>
+                <td>@contract.StartDate.ToShortDateString()</td>
+                <td>@contract.EndDate.ToShortDateString()</td>
+                <td>@contract.ServiceLevel</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@contract.Id" class="btn btn-sm btn-info">Details</a>
+                    <a asp-action="Edit" asp-route-id="@contract.Id" class="btn btn-sm btn-warning">Edit</a>
+                    @if (!string.IsNullOrEmpty(contract.SignedAgreementPath))
+                    {
+                        <a asp-action="Download" asp-route-id="@contract.Id" class="btn btn-sm btn-secondary">Download PDF</a>
+                    }
+                    <a asp-action="Delete" asp-route-id="@contract.Id" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!Model.Any())
+{
+    <p class="text-muted text-center">No contracts found matching your filter.</p>
+}

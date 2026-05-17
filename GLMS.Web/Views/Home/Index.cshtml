@@ -1,0 +1,40 @@
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="jumbotron p-5 bg-light rounded mb-4">
+    <h1 class="display-5 fw-bold">Global Logistics Management System</h1>
+    <p class="lead">Manage contracts, clients, and service requests for TechMove Logistics.</p>
+    <hr />
+    <p>Use the navigation above to get started.</p>
+</div>
+
+<div class="row">
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Clients</h5>
+                <p class="card-text">Manage client profiles and contact details.</p>
+                <a asp-controller="Client" asp-action="Index" class="btn btn-primary">View Clients</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Contracts</h5>
+                <p class="card-text">View, create, and manage freight contracts with PDF agreements.</p>
+                <a asp-controller="Contract" asp-action="Index" class="btn btn-primary">View Contracts</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Service Requests</h5>
+                <p class="card-text">Raise service requests with automatic USD to ZAR conversion.</p>
+                <a asp-controller="ServiceRequest" asp-action="Index" class="btn btn-primary">View Requests</a>
+            </div>
+        </div>
+    </div>
+</div>
