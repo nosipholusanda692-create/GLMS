@@ -158,6 +158,3 @@ This project directly implements the architecture designed in the Part 1 report:
 
 ---
 
-## Author
-Student — TechMove GLMS Project
-IIE Enterprise Development — Part 2 Submission
